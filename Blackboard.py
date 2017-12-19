@@ -4,13 +4,30 @@
 
 from flask import Flask, render_template, request, redirect, session, url_for
 import re
+
 app = Flask(__name__)
 app.secret_key = 'lasso91'
+
+def getSessionInfo ():
+    token = ''
+    if session['User_Id']>0:
+        token = True
+    return token
 
 @app.route('/')
 def index():
     print session
     return render_template('index.html')
+
+@app.route('/dashboard')
+def deashboard():
+    valid = getSessionInfo()
+
+    if valid:
+        return render_template('dashboard.html')
+    else:
+        return redirect(url_for('index'))
+
 
 @app.route('/login', methods=['GET','POST'])
 def login():
@@ -25,7 +42,7 @@ def login():
             if request.form['email'] == 'admin' and request.form['password'] == 'password':
                 session['Logged_In'] = 'Y'
                 session['User_Id'] = 1
-                return redirect('/Dashboard')
+                return redirect("/dashboard")
             else:
                 session['Logged_In'] = 'N'
                 error = 'Incorrect login or password'
@@ -35,7 +52,7 @@ def login():
     else:
         #validate Sessions Info
         #return render_template('login.html', error=error)
-        return redirect('/Dashboard')
+        return redirect('/dashboard')
 
 @app.route('/logout')
 def logout():
@@ -43,13 +60,6 @@ def logout():
     session.pop('User_Id', None)
     session.pop('Logged_In', None)
     return redirect(url_for('index'))
-
-"""
-@app.route('/submit', methods = ['POST'])
-
-
-@app.route('/clear', methods = ['POST'])
-"""
 
 if __name__ == '__main__':
     app.run()
