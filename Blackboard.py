@@ -4,6 +4,23 @@
 
 from flask import Flask, render_template, request, redirect, session, url_for
 import re
+import sqlite3 as lite
+
+con = lite.connect('hw13.db')
+con.row_factory = lite.Row
+cursor = con.cursor()
+
+def init_db():
+    with open('schema.sql') as db:
+        cursor.executescript(db.read())
+
+    temp_student = (301101,'John', 'Smith')
+    temp_quiz = (201, 'Python Basics', 5, '02-05-2015')
+    temp_grade = (1, 301101, 201, 85)
+
+    cursor.execute('INSERT into student(Identifier, FirstName, LastName) VALUES (?,?,?)', temp_student)
+    cursor.execute('INSERT into quizzes(Identifier, Subject,TotalQuestions, Date) VALUES (?,?,?,?)', temp_quiz)
+    cursor.execute('INSERT into grades(Identifier, Student, Quiz, Grade) VALUES (?,?,?)', temp_grade)
 
 app = Flask(__name__)
 app.secret_key = 'lasso91'

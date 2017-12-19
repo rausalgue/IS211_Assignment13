@@ -12,7 +12,7 @@ CREATE TABLE quizzes (
   Identifier INTEGER PRIMARY KEY,
   Subject TEXT,
   TotalQuestions INTEGER,
-  RawDate TEXT
+  Date TEXT
 );
 
 CREATE TABLE grades (
