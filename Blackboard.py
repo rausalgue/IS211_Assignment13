@@ -118,5 +118,25 @@ def logout():
     session.pop('Logged_In', None)
     return redirect(url_for('index'))
 
+
+@app.route('/student/add', methods=['GET', 'POST'])
+def newstudent():
+    if request.method == 'POST':
+        g.db.execute('insert into students (firstname, lastname) values (?, ?)',
+                     [request.form['firstname'], request.form['lastname']])
+        g.db.commit()
+        return redirect(url_for('dashboard'))
+    return render_template("newstudent.html")
+
+
+@app.route('/quiz/add', methods=['GET', 'POST'])
+def newquiz():
+    if request.method == 'POST':
+        g.db.execute('insert into quizzes (subject, questions, date) values (?, ?, ?)',
+                     [request.form['subject'], request.form['questions'], request.form['date']])
+        g.db.commit()
+        return redirect(url_for('dashboard'))
+    return render_template('newquiz.html')
+
 if __name__ == '__main__':
     app.run()
