@@ -156,6 +156,46 @@ def newquiz():
         return redirect('/dashboard')
     return render_template('newquiz.html')
 
+@app.route('/results/add', methods=['GET', 'POST'])
+def newResult():
+    valid = getSessionInfo()
+
+    conns = g.db.execute('SELECT MAX(Identifier) FROM grades')
+    greatest_id = 0
+    for row in conns.fetchall():
+        greatest_id = row[0]
+
+    #print greatest_id
+
+    if valid:
+        if request.method == 'POST':
+            greatest_id += 1
+
+            print greatest_id, request.form['studentID'], request.form['quizID'], request.form['grade']
+
+            g.db.execute('insert into grades (Identifier, Student, Quiz, Grade) values (?, ?, ?, ?)',
+                         [greatest_id, request.form['studentID'], request.form['quizID'], request.form['grade']])
+            g.db.commit()
+
+            return redirect('/dashboard')
+        else:
+            conns = g.db.execute('select Identifier, FirstName, LastName from student')
+            students = [dict(StudentID=row[0], FirstName=row[1], LastName=row[2])
+                        for row in conns.fetchall()]
+
+            #print students
+
+            conns = g.db.execute('select Identifier, Subject, TotalQuestions, Date from quizzes')
+            quizzes = [dict(QuizId=row[0], Subject=row[1], TotalQuestions=row[2], Date=row[3])
+                       for row in conns.fetchall()]
+
+            #print quizzes
+
+            return render_template('newresult.html', quizzes=quizzes, students=students)
+
+    else:
+        return redirect(url_for('index'))
+
 @app.route('/student/<identifier>')
 def getStudentData(identifier):
     valid = getSessionInfo()
