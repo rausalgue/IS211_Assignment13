@@ -31,7 +31,7 @@ cur.executescript("""
     """)
 
 cur.execute('INSERT into student VALUES (1201,"John","Smith");')
-cur.execute('INSERT into quizzes VALUES (101,"Python Basics",5,"12-05-2015");')
+cur.execute('INSERT into quizzes VALUES (101,"Python Basics",5,"2015-12-05");')
 cur.execute('INSERT into grades VALUES (1,1201,101,85);')
 
 cur.execute('INSERT into student VALUES (1202,"Rommel","Lasso");')
@@ -67,7 +67,7 @@ def index():
     return render_template('index.html')
 
 @app.route('/dashboard')
-def deashboard():
+def dashboard():
     valid = getSessionInfo()
 
     student_data = {}
@@ -121,21 +121,33 @@ def logout():
 
 @app.route('/student/add', methods=['GET', 'POST'])
 def newstudent():
+    conns = g.db.execute('SELECT MAX(Identifier) FROM student')
+    greatest_id = 0
+    for row in conns.fetchall():
+        greatest_id = row[0]
+
     if request.method == 'POST':
-        g.db.execute('insert into students (firstname, lastname) values (?, ?)',
-                     [request.form['firstname'], request.form['lastname']])
+        greatest_id += 1
+        g.db.execute('insert into student (Identifier, FirstName, LastName) values (?, ?, ?)',
+                     [greatest_id,request.form['fName'], request.form['lName']])
         g.db.commit()
-        return redirect(url_for('dashboard'))
+        return redirect('/dashboard')
     return render_template("newstudent.html")
 
 
 @app.route('/quiz/add', methods=['GET', 'POST'])
 def newquiz():
+    conns = g.db.execute('SELECT MAX(Identifier) FROM quizzes')
+    greatest_id = 0
+    for row in conns.fetchall():
+        greatest_id = row[0]
+
     if request.method == 'POST':
-        g.db.execute('insert into quizzes (subject, questions, date) values (?, ?, ?)',
-                     [request.form['subject'], request.form['questions'], request.form['date']])
+        greatest_id += 1
+        g.db.execute('insert into quizzes (Identifier, Subject, TotalQuestions, Date) values (?, ?, ?, ?)',
+                     [greatest_id,request.form['subject'], request.form['totalQuestions'], request.form['date']])
         g.db.commit()
-        return redirect(url_for('dashboard'))
+        return redirect('/dashboard')
     return render_template('newquiz.html')
 
 if __name__ == '__main__':
