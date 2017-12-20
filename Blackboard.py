@@ -160,18 +160,21 @@ def newquiz():
 def getStudentData(identifier):
     valid = getSessionInfo()
 
+    print identifier
+
     if valid:
         conns = g.db.execute('SELECT * FROM grades '
-                           'JOIN student '
-                           'ON grades.student = student.Identifier ')
-        quiz = conns.fetchall()
+                           'JOIN student ON grades.student = student.Identifier '
+                           'JOIN quizzes ON grades.quiz = quizzes.Identifier ')
+        quizzes = conns.fetchall()
 
-        print quiz
-        conns = g.db.execute('SELECT FirstName, LastName FROM student')
-        name = conns.fetchone()
+        print quizzes
+        conns = g.db.execute('SELECT FirstName, LastName, Identifier FROM student where Identifier = (?)', (identifier,))
 
-        print name
-        return render_template('details.html', quiz=quiz, name=name)
+        student_object = conns.fetchone()
+
+        print student_object
+        return render_template('details.html', quizzes=quizzes, student_object=student_object)
 
     else:
         return redirect(url_for('index'))
