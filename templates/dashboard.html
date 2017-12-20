@@ -159,7 +159,8 @@
                     <tbody>
                         {% for value in students %}
                         <tr>
-                            <td>{{ value.StudentID }} </td>
+                            <td><a href="student/{{ value.StudentID }}">
+                                {{ value.StudentID }} </a></td>
                             <td>{{ value.FirstName }} </td>
                             <td>{{ value.LastName }} </td>
                         </tr><!-- Table Row -->
@@ -206,6 +207,37 @@
         </div>
         <div class="subcontainer">
             <a href="/quiz/add" class="button">Add New Quiz</a>
+        </div>
+
+        <div class="subcontainer" style="display:none">
+            <div class="dashboard-buttons">
+                <table cellspacing='0'> <!-- cellspacing='0' is important, must stay -->
+                    <!-- Table Header -->
+                    <thead>
+                        <tr>
+                            <th>Identifier</th>
+                            <th>Student</th>
+                            <th>Quiz</th>
+                            <th>Grade</th>
+                        </tr>
+                    </thead>
+                    <!-- Table Header -->
+
+                   <!-- Table Body -->
+                    <tbody>
+                        {% for value in grades %}
+                        <tr>
+                            <td>{{ value.gradeID }} </td>
+                            <td>{{ value.StudentID }} </td>
+                            <td>{{ value.QuizID }} </td>
+                            <td>{{ value.Grade }} </td>
+                        </tr><!-- Table Row -->
+                        {% endfor %}
+
+                    </tbody>
+                    <!-- Table Body -->
+                </table>
+            </div>
         </div>
     </div>
 

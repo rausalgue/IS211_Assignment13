@@ -32,7 +32,9 @@ cur.executescript("""
 
 cur.execute('INSERT into student VALUES (1201,"John","Smith");')
 cur.execute('INSERT into quizzes VALUES (101,"Python Basics",5,"2015-12-05");')
+cur.execute('INSERT into quizzes VALUES (102,"Basics",100,"2015-10-05");')
 cur.execute('INSERT into grades VALUES (1,1201,101,85);')
+cur.execute('INSERT into grades VALUES (3,1201,102,65);')
 
 cur.execute('INSERT into student VALUES (1202,"Rommel","Lasso");')
 cur.execute('INSERT into grades VALUES (2,1202,101,100);')
@@ -80,8 +82,12 @@ def dashboard():
     quizzes = [dict(QuizId=row[0], Subject=row[1], TotalQuestions=row[2], Date=row[3])
                 for row in conns.fetchall()]
 
+    conns = g.db.execute('select Identifier, Student, Quiz, Grade from grades')
+    grades = [dict(gradeID=row[0], StudentID=row[1], QuizID=row[2], Grade=row[3])
+               for row in conns.fetchall()]
+
     if valid:
-        return render_template('dashboard.html', students = students, quizzes = quizzes)
+        return render_template('dashboard.html', students=students, quizzes=quizzes, grades=grades)
     else:
         return redirect(url_for('index'))
 
@@ -149,6 +155,26 @@ def newquiz():
         g.db.commit()
         return redirect('/dashboard')
     return render_template('newquiz.html')
+
+@app.route('/student/<identifier>')
+def getStudentData(identifier):
+    valid = getSessionInfo()
+
+    if valid:
+        conns = g.db.execute('SELECT * FROM grades '
+                           'JOIN student '
+                           'ON grades.student = student.Identifier ')
+        quiz = conns.fetchall()
+
+        print quiz
+        conns = g.db.execute('SELECT FirstName, LastName FROM student')
+        name = conns.fetchone()
+
+        print name
+        return render_template('details.html', quiz=quiz, name=name)
+
+    else:
+        return redirect(url_for('index'))
 
 if __name__ == '__main__':
     app.run()
