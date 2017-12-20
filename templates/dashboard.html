@@ -21,7 +21,7 @@
         padding: 0;
         background-color: #3366ff;
         color: #00000;
-        height: 100px;
+
         text-align: center;
     }
     table a:link {
@@ -145,11 +145,11 @@
 
                     <!-- Table Body -->
                     <tbody>
-                        {% for value in list_data %}
+                        {% for value in students %}
                         <tr>
-                             {% for dateval in list_data[value] %}
-                                <td>{{ dateval }} </td>
-                             {% endfor %}
+                            <td>{{ value.StudentID }} </td>
+                            <td>{{ value.FirstName }} </td>
+                            <td>{{ value.LastName }} </td>
                         </tr><!-- Table Row -->
                         {% endfor %}
 
@@ -173,13 +173,14 @@
                     </thead>
                     <!-- Table Header -->
 
-                    <!-- Table Body -->
+                   <!-- Table Body -->
                     <tbody>
-                        {% for value in list_data %}
+                        {% for value in quizzes %}
                         <tr>
-                             {% for dateval in list_data[value] %}
-                                <td>{{ dateval }} </td>
-                             {% endfor %}
+                            <td>{{ value.QuizId }} </td>
+                            <td>{{ value.Subject }} </td>
+                            <td>{{ value.TotalQuestions }} </td>
+                            <td>{{ value.Date }} </td>
                         </tr><!-- Table Row -->
                         {% endfor %}
 
